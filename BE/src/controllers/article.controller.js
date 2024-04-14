@@ -1,20 +1,17 @@
 const { body, validationResult } = require("express-validator");
 const articleModel = require("../models/article.model");
+const { checkValidation } = require("../util/helper");
+const HttpError = require("../util/HttpError");
 
 const getAllArticles = async (req, res) => {
     const records = await articleModel.find();
     res.send(records);
 };
 
-/*
-const getArticlesOfUser = async(req, res) = {
-
-};
-
-const getSpecificArticle = async(req, res) = {
-
-};
-*/
+const getArticleByUserId = async (req, res) => {
+    const records = await articleModel.find({ userId: req.user.userId });
+    res.send(records);
+}
 
 const createArticle = [
     body("name")
@@ -31,6 +28,7 @@ const createArticle = [
         checkValidation(validationResult(req));
 
         const { name, text } = req.body;
+
         const record = new articleModel({
             name,
             text,
@@ -49,11 +47,8 @@ const createArticle = [
     }
 ];
 
-/*
-
-*/
-
 module.exports = {
     getAllArticles,
     createArticle,
+    getArticleByUserId
 };

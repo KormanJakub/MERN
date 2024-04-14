@@ -22,6 +22,7 @@ app.use(authMiddleware);
 
 app.use("/public", require("./src/routes/user.route"));
 app.use("/articles", require("./src/routes/article.route"));
+app.use("/admin", require("./src/routes/admin.route"));
 
 app.use((error, req, res, next) => {
   if (res.headerSent) {
