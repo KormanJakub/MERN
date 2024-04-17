@@ -1,0 +1,45 @@
+import { Fragment, useState } from 'react'
+import './App.css'
+import HomePage from './pages/HomePage';
+import NavBar from './components/NavBar';
+import AboutPage from './pages/AboutPage';
+import ArticleBrowserPage from './pages/ArticleBrowserPage';
+
+function App() {
+  const [pagePositon, setPagePosition] = useState(0);
+
+  const handleSelect = (selectedValue) => {
+    if (selectedValue === "home") {
+      setPagePosition(0);
+    }
+
+    if (selectedValue === "about") {
+      setPagePosition(1);
+    }
+
+    if (selectedValue === "articles") {
+      setPagePosition(2);
+    }
+
+    if (selectedValue === "articleDetail") {
+      setPagePosition(3);
+    }
+  };
+
+  const pages = [
+    <HomePage key={0} onSelect={handleSelect} />,
+    <AboutPage key={1} onSelect={handleSelect} />,
+    <ArticleBrowserPage key={2} onSelect={handleSelect} />,
+  ];
+
+  let content = pages[pagePositon];
+
+  return (
+      <Fragment>
+      <NavBar onSelect={handleSelect} />
+      {content}
+    </Fragment>
+  );
+}
+
+export default App;
