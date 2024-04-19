@@ -1,4 +1,3 @@
-import NavButton from './NavButton';
 import {MegaMenu} from 'primereact/megamenu';
 
 const NavBar = ({ onSelect }) => {
@@ -19,10 +18,10 @@ const NavBar = ({ onSelect }) => {
                 </div>;
   
   const end = <div className="grid">
-                <div className="col py-5">
+                <div className="col py-5 cursor-pointer fadeout">
                   Login
                 </div>
-                <div className="col py-5">
+                <div className="col py-5 cursor-pointer fadeout">
                   <i className='pi pi-user'></i>
                 </div>
               </div>;
