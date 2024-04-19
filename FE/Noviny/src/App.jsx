@@ -4,6 +4,7 @@ import HomePage from './pages/HomePage';
 import NavBar from './components/NavBar';
 import AboutPage from './pages/AboutPage';
 import ArticleBrowserPage from './pages/ArticleBrowserPage';
+import AdminPage from './pages/AdminPage';
 
 function App() {
   const [pagePositon, setPagePosition] = useState(0);
@@ -24,12 +25,17 @@ function App() {
     if (selectedValue === "articleDetail") {
       setPagePosition(3);
     }
+
+    if (selectedValue === "admin") {
+      setPagePosition(4);
+    }
   };
 
   const pages = [
     <HomePage key={0} onSelect={handleSelect} />,
     <AboutPage key={1} onSelect={handleSelect} />,
     <ArticleBrowserPage key={2} onSelect={handleSelect} />,
+    <AdminPage key={3} onSelect={handleSelect} />,
   ];
 
   let content = pages[pagePositon];

@@ -2,14 +2,14 @@ const NavBar = ({ onSelect }) => {
 
   return (
     <nav>
-      <div class="flex gap-5 justify-content-between  surface-200 pr-4 pl-4">
+      <div class="flex gap-5 justify-content-between bg-gray-400 pr-4 pl-4">
       <div className="flex gap-5">
         <p class="cursor-pointer" onClick={() => onSelect("home")}>NOVINY.SK</p>
         <p class="cursor-pointer" onClick={() => onSelect("about")}>About</p>
         <p class="cursor-pointer" onClick={() => onSelect("articles")}>Articles</p>
       </div>
       <div className="flex justify gap-5 justify-content-center">
-        <p class="cursor-pointer" onClick={() => onSelect("articles")}>Admin</p>
+        <p class="cursor-pointer" onClick={() => onSelect("admin")}>Admin</p>
         <p class="cursor-pointer">Login</p>
         <p class="cursor-pointer">Register</p>
       </div>
