@@ -2,7 +2,7 @@ import { Image } from 'primereact/image';
 
 const AboutPage = ({ onSelect }) => {
     return (
-        <div className="flex justify-content-center align-content-center gap-8 mr-6 ml-6 mt-8">
+        <div className="grip justify-content-center align-content-center gap-8 mr-6 ml-6 mt-8">
             <div className="flex align-items-center justify-content-center">
             <Image src="https://c1.wallpaperflare.com/preview/552/758/364/computer-laptop-macbook-coding.jpg" alt="Image" width="900" preview />
             </div>
