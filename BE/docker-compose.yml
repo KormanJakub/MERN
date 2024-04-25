@@ -1,0 +1,15 @@
+version: "3.9"
+services:
+  mongoDB:
+    image: "mongo"
+    command: mongod --auth --logpath /dev/null
+    restart: unless-stopped
+    environment:
+      - MONGO_INITDB_DATABASE=portal
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=63r96Zhvsvy5zO56H9o2
+    volumes:
+      - ./databaseData:/data/db
+      - ./api-mongo-init.js:/docker-entrypoint-initdb.d/api-mongo-init.js:ro
+    ports:
+      - 27017:27017

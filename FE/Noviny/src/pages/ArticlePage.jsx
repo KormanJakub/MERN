@@ -1,76 +1,123 @@
-import { Image } from 'primereact/image';
 import { Card } from 'primereact/card';
 
-const datas = [
-    {
-        image: "src/assets/main-page-1.jpg",
-        name: "Lorem Ipsum 1",
-        userName: "Jožo Ráž",
-        dateOfUpload: "19.4.2024",
-        text:"Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-        reviews: [
-            {
-              text: "Článok je dobrý",
-              reviewerName: "Peter Stastny",
-              id: "1234",
-            },
-            {
-              text: "Prečo toto je tak otrasné",
-              reviewerName: "Peter Velky",
-              id: "1234",
-            },
-            {
-              text: "Neklam",
-              reviewerName: "Jožo Stastny",
-              id: "1234",
-            },
-          ],
+import { InputTextarea } from 'primereact/inputtextarea'; 
+
+import { useCallback, useEffect, useState } from "react";
+import { fetchGet, fetchPost } from "../util/api";
+
+const ArticlePage = ({ selectedArticle }) => {
+  const [article, setData] = useState({ comments: []});
+  const [comment, setComment] = useState("");
+
+  const load = useCallback(async () => {
+    try {
+      const artData = await fetchGet(
+        "/articles/getArticleById/"+selectedArticle
+      );
+
+      setData({
+        ...artData.record,
+        comments: artData.comments,
+      });
+    } catch (error) {
+      console.log(error.message);
     }
-]
+  }, [selectedArticle]);
 
-const ArticlePage = () => {
-    return (
-      <div>
-        {datas.map((data, index) => (
-          <div className='' key={index}>
-            
-              <h1>{data.name}</h1>
+  useEffect(() => {
+    load();
+  }, [load, selectedArticle]);
 
-              <div className="creater-date flex gap-8">
-                <p>{data.userName}</p>
-                <p>{data.dateOfUpload}</p>
-              </div>
+  const addComment = async (comment) => {
+    try {
+      const objData = {
+        text: comment,
+        art_id: article._id,
+      };
 
-              <div className="image">
-                <Image src={data.image} alt="Image" width="700" preview/>
-              </div>
+      const service = await fetchPost("/comments/create", objData);
 
-              <div className="text w-6">
-                <p>{data.text}</p>
-              </div>
+      if (service === 0) {
+        console.log("Comment bol pridany!");
+        load();
+      }
 
-            <div className="comments" key={index}>
-              <div className="number-of-comments">
-                {data.reviews.length} komentárov
-              </div>
+    } catch (error) {
+      console.log("Error: " + error.message);
+    }
+  };
 
-            {data.reviews.map((review, index) => (
-              <div key={index}>
-                <Card
-                  title={review.reviewerName}
-                  footer={
-                    <div className="comment-text">
-                      {review.text}
-                    </div>
-                  }
-                />
-              </div>
-            ))}
-          </div>
-          </div>
-        ))}
-      </div>
-    )
+  const updateComment = async (id, identifier, comment) => {
+    try {
+      const objData = {
+        [identifier]: comment,
+      };
+
+      const service = await fetchPut("/comments/update/" + id, objData, "PUT");
+
+      if (service == 0) {
+        console.log("Comment bol zmeneny!");
+        load();
+      }
+    } catch (error) {
+      console.log("Error: " + error.message);
+      load();
+    }
+  };
+
+  return (
+    <div>
+        <div className=''>
+            <h1>{article.name}</h1>
+
+            <div className="creater-date flex gap-8">
+              <p>{article.userName}</p>
+              <p>{article.publicationTime}</p>
+            </div>
+
+            <div className="text w-6">
+              <p>{article.text}</p>
+            </div>
+
+            {article.comments.length == 0 && (
+              <p>Tvoj názor nás zaujíma, napíš prvý komentár.</p>
+            )}
+
+            {article.comments.length == 1 && (
+              <p>{article.comments.length} komentár</p>
+            )}
+
+            {article.comments.length > 1 && article.comments.length  < 5 && (
+              <p>{article.comments.length} komentáre</p>
+            )}
+
+            {article.comments.length > 4 && (
+              <p>{article.comments.length} komentárov</p>
+            )}
+
+            <div className="add-comment">
+              <InputTextarea value={comment} onChange={(e) => setComment(e.target.value)} rows={1} cols={100} />
+              <button onClick={() => addComment(comment)}>Add Comment</button>
+            </div>
+
+            <div className="comments">
+              {article.comments.map((comment, index) => {
+                return (
+                  <div key={index}>
+                  <Card
+                    title={comment.commentatorName}
+                    footer={
+                      <div className="comment-text">
+                        {comment.text}
+                      </div>
+                    }
+                  />
+                </div>
+                )})}
+            </div>
+        </div>
+    </div>
+  )  
 }
 
 export default ArticlePage;
