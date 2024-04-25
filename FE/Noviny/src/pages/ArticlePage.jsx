@@ -5,8 +5,18 @@ import { InputTextarea } from 'primereact/inputtextarea';
 import { useCallback, useEffect, useState } from "react";
 import { fetchGet, fetchPost } from "../util/api";
 
+/*
+  TODO:
+  Mazanie komentárov
+  Pridať možnosť pridávať moje komentáre
+  Pridať možnosť editovať moje komentáre
+  Pridať možnosť mazania mojích komentárov
+  Upraviť aby to nejako vyzeralo 
+*/
+
 const ArticlePage = ({ selectedArticle }) => {
   const [article, setData] = useState({ comments: []});
+  const [updating, setUpdate] = useState(false);
   const [comment, setComment] = useState("");
 
   const load = useCallback(async () => {
@@ -65,6 +75,10 @@ const ArticlePage = ({ selectedArticle }) => {
     }
   };
 
+  const deleteComment = async(id) => {
+
+  };
+
   return (
     <div>
         <div className=''>
@@ -107,9 +121,7 @@ const ArticlePage = ({ selectedArticle }) => {
                   <Card
                     title={comment.commentatorName}
                     footer={
-                      <div className="comment-text">
-                        {comment.text}
-                      </div>
+                      <p>{comment.text}</p>
                     }
                   />
                 </div>

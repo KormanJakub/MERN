@@ -10,8 +10,8 @@ const NavBar = ({ onSelect }) => {
       </div>
       <div className="flex justify gap-5 justify-content-center">
         <p class="cursor-pointer" onClick={() => onSelect("admin")}>Admin</p>
-        <p class="cursor-pointer">Login</p>
-        <p class="cursor-pointer">Register</p>
+        <p class="cursor-pointer" onClick={() => onSelect("login")}>Login</p>
+        <p class="cursor-pointer" onClick={() => onSelect("register")}>Register</p>
       </div>
       </div>
     </nav>

@@ -6,12 +6,15 @@ import AboutPage from './pages/AboutPage';
 import ArticleBrowserPage from './pages/ArticleBrowserPage';
 import AdminPage from './pages/AdminPage';
 import ArticlePage from './pages/ArticlePage';
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
+import AddArticlePage from './pages/AddArticlePage';
 
 function App() {
   const [pagePositon, setPagePosition] = useState(0);
   const [selectedArticle, setSelectedArticle] = useState(1);
 
-  const handleSelect = useCallback((selectedValue, rest_id) => {
+  const handleSelect = useCallback((selectedValue, art_id) => {
     if (selectedValue === "home") {
       setPagePosition(0);
     }
@@ -26,11 +29,23 @@ function App() {
 
     if (selectedValue === "articleDetail") {
       setPagePosition(3);
-      setSelectedArticle(rest_id);
+      setSelectedArticle(art_id);
     }
 
     if (selectedValue === "admin") {
       setPagePosition(4);
+    }
+
+    if (selectedValue === "login") {
+      setPagePosition(5);
+    }
+
+    if (selectedValue === "register") {
+      setPagePosition(6);
+    }
+
+    if (selectedValue === "add-article") {
+      setPagePosition(7);
     }
   });
   
@@ -41,15 +56,18 @@ function App() {
     <ArticleBrowserPage key={2} onSelect={handleSelect} />,
     <ArticlePage key={3} selectedArticle={selectedArticle}/>,
     <AdminPage key={4} onSelect={handleSelect} />,
+    <LoginPage key={5}/>,
+    <RegisterPage key={6}/>,
+    <AddArticlePage key={7}/>
   ];
 
   let content = pages[pagePositon];
 
   return (
       <Fragment>
-      <NavBar onSelect={handleSelect} />
-      {content}
-    </Fragment>
+        <NavBar onSelect={handleSelect} />
+          {content}
+      </Fragment>
   );
 }
 

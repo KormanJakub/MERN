@@ -11,7 +11,7 @@ import 'primereact/resources/themes/lara-light-indigo/theme.css';
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
       <PrimeReactProvider>
-      <App />
+        <App />
       </PrimeReactProvider>
   </React.StrictMode>,
 )

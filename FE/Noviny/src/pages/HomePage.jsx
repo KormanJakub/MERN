@@ -82,6 +82,7 @@ const HomePage = ({ onSelect }) => {
                         backgroundColor: 'white',
                         borderColor: 'var(--coffee-color)'
                     }}
+                    onClick={() => onSelect("login")}
                     />
 
                     <Button label="REGISTRÁCIA"
@@ -94,6 +95,7 @@ const HomePage = ({ onSelect }) => {
                         backgroundColor: 'white',
                         borderColor: 'var(--white)'
                     }}
+                    onClick={() => onSelect("register")}
                     />
                 </div>
               </div>
