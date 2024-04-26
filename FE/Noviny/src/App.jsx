@@ -48,26 +48,26 @@ function App() {
       setPagePosition(7);
     }
   });
-  
+
 
   const pages = [
     <HomePage key={0} onSelect={handleSelect} />,
-    <AboutPage key={1}/>,
+    <AboutPage key={1} />,
     <ArticleBrowserPage key={2} onSelect={handleSelect} />,
-    <ArticlePage key={3} selectedArticle={selectedArticle}/>,
+    <ArticlePage key={3} selectedArticle={selectedArticle} />,
     <AdminPage key={4} onSelect={handleSelect} />,
-    <LoginPage key={5}/>,
-    <RegisterPage key={6}/>,
-    <AddArticlePage key={7}/>
+    <LoginPage key={5} />,
+    <RegisterPage key={6} />,
+    <AddArticlePage key={7} />
   ];
 
   let content = pages[pagePositon];
 
   return (
-      <Fragment>
-        <NavBar onSelect={handleSelect} />
-          {content}
-      </Fragment>
+    <Fragment>
+      <NavBar onSelect={handleSelect} />
+      {content}
+    </Fragment>
   );
 }
 
