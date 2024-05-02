@@ -18,6 +18,7 @@ if (!process.env.mongoURL) {
 
 const app = express();
 app.use(json());
+app.use(express.static("public"));
 
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*"); // allow all domains

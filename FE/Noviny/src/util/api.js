@@ -1,3 +1,5 @@
+import { getAuthToken } from "./auth";
+
 const urlBase = "http://localhost:3000";
 
 const handleApiError = (err) => {
@@ -5,7 +7,11 @@ const handleApiError = (err) => {
 };
 
 export const fetchGet = async (url) => {
-  const response = await fetch(urlBase + url);
+  const response = await fetch(urlBase + url, {
+    headers: {
+      ["x-access-token"]: getAuthToken(),
+    },
+  });
   const respData = await response.json();
   if (response.ok) {
     return respData;
@@ -21,10 +27,12 @@ export const fetchPost = async (url, body, method = "POST") => {
     body: JSON.stringify(body),
     headers: {
       "Content-Type": "application/json",
+      "x-access-token": getAuthToken(),
     },
   });
   if (response.ok) {
-    return 0;
+    const respData = await response.json();
+    return respData;
   } else {
     const respData = await response.json();
     throw new Error(handleApiError(respData));

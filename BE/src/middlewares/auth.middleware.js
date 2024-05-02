@@ -1,8 +1,11 @@
 const jwt = require("jsonwebtoken");
 
 const authMiddleware = async (req, res, next) => {
-  return next();
-  if (req.url.startsWith("/public")) {
+  if (
+    req.url.startsWith("/public") ||
+    req.method === "OPTIONS" ||
+    req.url.startsWith("/images")
+  ) {
     return next();
   }
   const token = req.headers["x-access-token"];

@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Button } from "primereact/button";
+import { Dialog } from "primereact/dialog";
 
 import { Knob } from "primereact/knob";
 
@@ -67,38 +68,36 @@ const AdminPage = ({ onSelect }) => {
 
       <DataTable
         className="mt-5 mb-8"
+        showGridlines
+        removableSort
         value={userDatas}
         tableStyle={{ minWidth: "50rem", minHeight: "20rem" }}
         paginator
         rows={5}
       >
-        <Column field="nickName" header="Nick Name"></Column>
+        <Column
+          className="cursor-pointer"
+          field="nickName"
+          header="Nick Name"
+        ></Column>
         <Column field="firstName" header="First Name"></Column>
         <Column field="lastName" header="Last Name"></Column>
         <Column field="email" header="Email"></Column>
-        <Button
-          icon="pi pi-pencil"
-          className=""
-          rounded
-          outlined
-          severity="help"
-        />
-        <Button
-          icon="pi pi-times"
-          className=""
-          rounded
-          outlined
-          severity="danger"
-        />
       </DataTable>
 
       <DataTable
         value={articleDatas}
+        showGridlines
+        removableSort
         tableStyle={{ minWidth: "50rem", minHeight: "20rem" }}
         paginator
         rows={5}
       >
-        <Column field="name" header="Name of article"></Column>
+        <Column
+          className="cursor-pointer"
+          field="name"
+          header="Name of article"
+        ></Column>
         <Column field="publicationTime" header="Publication time"></Column>
         <Column field="userName" header="Writer"></Column>
       </DataTable>
