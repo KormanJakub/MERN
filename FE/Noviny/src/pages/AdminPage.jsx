@@ -1,10 +1,14 @@
 import { useEffect, useState } from "react";
 
-import { DataTable } from 'primereact/datatable';
-import { Column } from 'primereact/column';
+import { DataTable } from "primereact/datatable";
+import { Column } from "primereact/column";
+import { Button } from "primereact/button";
+
+import { Knob } from "primereact/knob";
 
 const AdminPage = ({ onSelect }) => {
   const [userDatas, setUsersData] = useState([]);
+  const [articleDatas, setArticleDatas] = useState([]);
 
   useEffect(() => {
     const load = async () => {
@@ -15,26 +19,89 @@ const AdminPage = ({ onSelect }) => {
           setUsersData(
             responseData.map((item) => {
               return {
-                ...item
+                ...item,
               };
             })
-          )
+          );
+        }
+
+        const responseArticle = await fetch(
+          "http://localhost:3000/articles/getAllArticles"
+        );
+
+        if (responseArticle.ok) {
+          const responseData1 = await responseArticle.json();
+          setArticleDatas(
+            responseData1.map((item) => {
+              return {
+                ...item,
+              };
+            })
+          );
         }
       } catch (error) {
-        alert("Error loding articles!");
+        console.log("Error loding datas for ADMIN!");
       }
     };
     load();
   }, []);
 
   return (
-    <div>
-      <DataTable value={userDatas} tableStyle={{ minWidth: '50rem' }}>
-          <Column field="nickName" header="Nick Name"></Column>
-          <Column field="firstName" header="First Name"></Column>
-          <Column field="lastName" header="Last Name"></Column>
-          <Column field="email" header="Email"></Column>
-        </DataTable>
+    <div className="admin">
+      <div className="flex gap-8  align-items-center justify-content-center">
+        <div>
+          <Knob
+            value={userDatas.length}
+            disabled
+            size={250}
+            valueColor="#48d1cc"
+          />
+          <p className="ml-5">Registered users!</p>
+        </div>
+
+        <div className="articles">
+          <Knob value={articleDatas.length} disabled size={250} />
+          <p className="ml-5">Created articles!</p>
+        </div>
+      </div>
+
+      <DataTable
+        className="mt-5 mb-8"
+        value={userDatas}
+        tableStyle={{ minWidth: "50rem", minHeight: "20rem" }}
+        paginator
+        rows={5}
+      >
+        <Column field="nickName" header="Nick Name"></Column>
+        <Column field="firstName" header="First Name"></Column>
+        <Column field="lastName" header="Last Name"></Column>
+        <Column field="email" header="Email"></Column>
+        <Button
+          icon="pi pi-pencil"
+          className=""
+          rounded
+          outlined
+          severity="help"
+        />
+        <Button
+          icon="pi pi-times"
+          className=""
+          rounded
+          outlined
+          severity="danger"
+        />
+      </DataTable>
+
+      <DataTable
+        value={articleDatas}
+        tableStyle={{ minWidth: "50rem", minHeight: "20rem" }}
+        paginator
+        rows={5}
+      >
+        <Column field="name" header="Name of article"></Column>
+        <Column field="publicationTime" header="Publication time"></Column>
+        <Column field="userName" header="Writer"></Column>
+      </DataTable>
     </div>
   );
 };
