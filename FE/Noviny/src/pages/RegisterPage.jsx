@@ -1,17 +1,49 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { fetchPost } from "../util/api";
+import { useNavigate } from "react-router-dom";
+
 import { InputText } from "primereact/inputtext";
 import { FloatLabel } from "primereact/floatlabel";
 import { Button } from "primereact/button";
 import { Password } from "primereact/password";
 import { Divider } from "primereact/divider";
-import { fetchPost } from "../util/api";
 
-const RegisterPage = ({ onSelect }) => {
+import validator from "validator";
+
+/*
+TODO:
+Spraviť validáciu
+Spraviť, aby sa zobrazil error ak je niečo neplatné
+*/
+
+const RegisterPage = () => {
+  const required = (value) => {
+    if (!value) {
+      return (
+        <div className="alert alert-danger" role="alert">
+          This field is required!
+        </div>
+      );
+    }
+  };
+
+  const emailVal = (value) => {
+    if (!validator.isEmail(value)) {
+      return (
+        <div className="alert alert-danger" role="alert">
+          This is not a valid email.
+        </div>
+      );
+    }
+  };
+
   const [nickName, setNickName] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  const navigate = useNavigate();
 
   const registerUser = async (
     pNickName,
@@ -20,21 +52,18 @@ const RegisterPage = ({ onSelect }) => {
     pEmail,
     pPassword
   ) => {
+    const objData = {
+      nickName: pNickName,
+      firstName: pFirstName,
+      lastName: pLastName,
+      email: pEmail,
+      password: pPassword,
+      password_repeat: pPassword,
+    };
+
     try {
-      const objData = {
-        nickName: pNickName,
-        firstName: pFirstName,
-        lastName: pLastName,
-        email: pEmail,
-        password: pPassword,
-        password_repeat: pPassword,
-      };
-
-      const service = await fetchPost("/public/signUp", objData);
-
-      if (service === 0) {
-        console.log("User bol pridany!");
-      }
+      await fetchPost("/public/signUp", objData);
+      navigate("/");
     } catch (error) {
       console.log("Error: " + error.message);
     }
@@ -64,8 +93,9 @@ const RegisterPage = ({ onSelect }) => {
             value={nickName}
             onChange={(e) => setNickName(e.target.value)}
             id="nickName"
+            validations={[required]}
           />
-          <label htmlFor="nickName">* Username</label>
+          <label htmlFor="nickName">Username*</label>
         </FloatLabel>
       </div>
 
@@ -94,8 +124,9 @@ const RegisterPage = ({ onSelect }) => {
           id="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          validations={[required, emailVal]}
         />
-        <label htmlFor="email">* Email</label>
+        <label htmlFor="email">Email*</label>
       </FloatLabel>
 
       <div className="flex gap-4">
@@ -106,14 +137,15 @@ const RegisterPage = ({ onSelect }) => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <label htmlFor="password">* Password</label>
+          <label htmlFor="password">Password*</label>
         </FloatLabel>
 
         <FloatLabel>
           <Password id="confirm-password" />
-          <label htmlFor="confirm-password">* Confirm your password</label>
+          <label htmlFor="confirm-password">Confirm your password*</label>
         </FloatLabel>
       </div>
+      <p>When * is required</p>
       <Button
         label="Register"
         icon="pi pi-check"

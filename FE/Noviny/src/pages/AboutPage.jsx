@@ -1,6 +1,6 @@
 import { Image } from "primereact/image";
 
-const AboutPage = ({ onSelect }) => {
+const AboutPage = () => {
   return (
     <div className="grip justify-content-center align-content-center gap-8 mr-6 ml-6 mt-8">
       <div className="flex align-items-center justify-content-center">

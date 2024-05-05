@@ -11,8 +11,14 @@ export async function action({ request }) {
   try {
     const response = await fetchPost("/public/signIn", data);
     localStorage.setItem("uiAppToken", response.token);
-    return redirect("/");
+    localStorage.setItem("uiAppRole", response.role);
+    if (response.role === "admin") {
+      return redirect("/admin");
+    } else {
+      return redirect("/");
+    }
   } catch (error) {
     alert(error.message);
+    return null;
   }
 }

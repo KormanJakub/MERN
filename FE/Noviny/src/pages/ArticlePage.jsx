@@ -1,30 +1,19 @@
 import { Card } from "primereact/card";
-
+import { useParams } from "react-router-dom";
 import { InputTextarea } from "primereact/inputtextarea";
-
 import { useCallback, useEffect, useState } from "react";
 import { fetchGet, fetchPost } from "../util/api";
 
-/*
-  TODO:
-  Mazanie komentárov
-  Pridať možnosť pridávať moje komentáre
-  Pridať možnosť editovať moje komentáre
-  Pridať možnosť mazania mojích komentárov
-  Upraviť aby to nejako vyzeralo 
-*/
-
-const ArticlePage = ({ selectedArticle }) => {
+const ArticlePage = () => {
   const [article, setData] = useState({ comments: [] });
   const [updating, setUpdate] = useState(false);
   const [comment, setComment] = useState("");
 
+  const { art_id } = useParams();
+
   const load = useCallback(async () => {
     try {
-      const artData = await fetchGet(
-        "/articles/getArticleById/" + selectedArticle
-      );
-
+      const artData = await fetchGet("/articles/getArticleById/" + art_id);
       setData({
         ...artData.record,
         comments: artData.comments,
@@ -32,99 +21,89 @@ const ArticlePage = ({ selectedArticle }) => {
     } catch (error) {
       console.log(error.message);
     }
-  }, [selectedArticle]);
+  }, [art_id]);
 
   useEffect(() => {
     load();
-  }, [load, selectedArticle]);
+  }, [load]);
 
   const addComment = async (comment) => {
     try {
+      const token = localStorage.getItem("uiAppToken");
       const objData = {
         text: comment,
         art_id: article._id,
       };
 
-      const service = await fetchPost("/comments/create", objData);
+      const response = await fetch("http://localhost:3000/comments/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-access-token": token,
+        },
+        body: JSON.stringify(objData),
+      });
 
-      if (service === 0) {
+      if (response.ok) {
         console.log("Comment bol pridany!");
         load();
+      } else {
+        console.log("Failed to add comment. Response status:", response.status);
       }
     } catch (error) {
       console.log("Error: " + error.message);
     }
   };
-
-  const updateComment = async (id, identifier, comment) => {
-    try {
-      const objData = {
-        [identifier]: comment,
-      };
-
-      const service = await fetchPut("/comments/update/" + id, objData, "PUT");
-
-      if (service == 0) {
-        console.log("Comment bol zmeneny!");
-        load();
-      }
-    } catch (error) {
-      console.log("Error: " + error.message);
-      load();
-    }
-  };
-
-  const deleteComment = async (id) => {};
 
   return (
-    <div>
-      <div className="">
+    <div className="flex justify-content-center align-items-center min-h-screen">
+      <div className="flex flex-column align-items-center gap-4 w-6">
         <h1>{article.name}</h1>
 
-        <div className="creater-date flex gap-8">
+        <div className="flex gap-8">
           <p>{article.userName}</p>
           <p>{article.publicationTime}</p>
         </div>
 
-        <div className="text w-6">
+        <div className="text">
           <p>{article.text}</p>
         </div>
 
-        {article.comments.length == 0 && (
+        {article.comments.length === 0 && (
           <p>Tvoj názor nás zaujíma, napíš prvý komentár.</p>
         )}
 
-        {article.comments.length == 1 && (
-          <p>{article.comments.length} komentár</p>
-        )}
+        {article.comments.length === 1 && <p>{article.comments.length} komentár</p>}
 
         {article.comments.length > 1 && article.comments.length < 5 && (
           <p>{article.comments.length} komentáre</p>
         )}
 
-        {article.comments.length > 4 && (
+        {article.comments.length >= 5 && (
           <p>{article.comments.length} komentárov</p>
         )}
 
-        <div className="add-comment">
+        <div className="flex flex-column align-items-center w-full">
           <InputTextarea
             value={comment}
             onChange={(e) => setComment(e.target.value)}
             rows={1}
-            cols={100}
+            cols={50}
           />
-          <button onClick={() => addComment(comment)}>Add Comment</button>
+          <button className="p-button p-component" onClick={() => addComment(comment)}>
+            Add Comment
+          </button>
         </div>
 
-        <div className="comments">
+        <div className="w-full">
           {article.comments.map((comment, index) => {
             return (
-              <div key={index}>
-                <Card
-                  title={comment.commentatorName}
-                  footer={<p>{comment.text}</p>}
-                />
-              </div>
+              <Card
+                key={index}
+                title={comment.commentatorName}
+                footer={comment.text}
+                className="mb-4"
+              />
             );
           })}
         </div>

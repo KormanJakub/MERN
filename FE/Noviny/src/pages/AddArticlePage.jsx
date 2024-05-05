@@ -2,9 +2,9 @@ import { Editor } from "primereact/editor";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import { fetchPost } from "../util/api";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
-const AddArticlePage = ({ onSelect }) => {
+const AddArticlePage = () => {
   const [header, setHeader] = useState("");
   const [text, setText] = useState("");
 

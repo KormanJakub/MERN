@@ -26,6 +26,8 @@ const articleSchema = new Schema({
         type: Date, 
         required: true
     },
+
+    imageLocation: { type: String },
 });
 
 module.exports = mongoose.model("Article", articleSchema);

@@ -21,19 +21,19 @@ app.use(json());
 app.use(express.static("public"));
 
 app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "*"); // allow all domains
-  res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-
+  res.setHeader("Access-Control-Allow-Origin", "*"); 
+  res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT, DELETE");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, x-access-token");
   next();
 });
 
 app.use(authMiddleware);
 
-app.use("/public", require("./src/routes/user.route"));
+app.use("/public", require("./src/routes/public.route"));
 app.use("/articles", require("./src/routes/article.route"));
 app.use("/admin", require("./src/routes/admin.route"));
 app.use("/comments", require("./src/routes/comment.route"));
+app.use("/user", require("./src/routes/user.route"));
 
 app.use((error, req, res, next) => {
   if (res.headerSent) {

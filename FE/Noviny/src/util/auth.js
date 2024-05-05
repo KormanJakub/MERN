@@ -1,8 +1,11 @@
 import { redirect } from "react-router-dom";
 
 export const getAuthToken = () => {
-  const token = localStorage.getItem("uiAppToken");
-  return token;
+  return localStorage.getItem("uiAppToken");
+};
+
+export const getAdmin = () => {
+  return localStorage.getItem("uiAppRole");
 };
 
 export const tokenLoader = () => {
@@ -15,5 +18,16 @@ export function checkAuthLoader() {
   if (!token) {
     return redirect("/login");
   }
-  return 0;
-}
+
+  return null;
+};
+
+export function checkAdmin() {
+  const authData = getAdmin();
+
+  if (authData !== "admin") {
+    return redirect("/");
+  }
+
+  return null;
+};

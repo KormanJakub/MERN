@@ -23,14 +23,14 @@ const create = [
       text,
       articleName: article.name,
       articleId: art_id,
-      commentatorName: "Admin", //req.user.userName,
-      commentatorId: "661fa10499641ffc907693c5", //req.user.userId,
+      commentatorName: req.user.userName,
+      commentatorId: req.user.userId,
     });
     
     try {
       await record.save();
     } catch (error) {
-      throw new HttpError(`Database error: ${error.message}`, 500);
+      throw new HttpError(`Database error: ${error.message} ${req.user.commentatorId}`, 500);
     }
     res.status(201).send(record);
   },

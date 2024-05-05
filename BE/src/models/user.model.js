@@ -8,6 +8,7 @@ const userSchema = new Schema(
     lastName: { type: String, required: false },
     email: { type: String, lowercase: true, trim: true },
     password: { type: String, required: true },
+    role: {type: String, required: false},
     salt: { type: String, required: true },
   },
   { timestamps: true }
