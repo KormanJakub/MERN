@@ -1,13 +1,15 @@
 import { Card } from "primereact/card";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { InputTextarea } from "primereact/inputtextarea";
 import { useCallback, useEffect, useState } from "react";
 import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
+import { decodeJWT } from "../util/token";
 import { fetchGet, fetchPost } from "../util/api";
 
 const ArticlePage = () => {
+  const navigate = useNavigate();
   const [article, setArticle] = useState({ comments: [] });
   const [comment, setComment] = useState("");
   const [editArticleDialog, setEditArticleDialog] = useState(false);
@@ -15,7 +17,11 @@ const ArticlePage = () => {
   const [editComment, setEditComment] = useState({});
   const { art_id } = useParams();
 
-  const adminRole = localStorage.getItem("uiAppRole") === "admin";
+  const token = localStorage.getItem("uiAppToken");
+  const decodedToken = decodeJWT(token);
+  const userId = decodedToken?.userId || "";
+
+  const isAdmin = localStorage.getItem("uiAppRole") === "admin";
 
   const load = useCallback(async () => {
     try {
@@ -35,7 +41,6 @@ const ArticlePage = () => {
 
   const addComment = async (comment) => {
     try {
-      const token = localStorage.getItem("uiAppToken");
       const objData = {
         text: comment,
         art_id: article._id,
@@ -63,7 +68,6 @@ const ArticlePage = () => {
 
   const removeComment = async (commentId) => {
     try {
-      const token = localStorage.getItem("uiAppToken");
       const response = await fetch(
         `http://localhost:3000/comments/delete/${commentId}`,
         {
@@ -90,7 +94,6 @@ const ArticlePage = () => {
 
   const removeArticle = async () => {
     try {
-      const token = localStorage.getItem("uiAppToken");
       const response = await fetch(
         `http://localhost:3000/articles/removeArticle/${art_id}`,
         {
@@ -103,7 +106,7 @@ const ArticlePage = () => {
 
       if (response.ok) {
         console.log("Article removed successfully!");
-        // Redirect to another page after deletion
+        navigate("/articles");
       } else {
         console.log(
           "Failed to remove article. Response status:",
@@ -117,7 +120,6 @@ const ArticlePage = () => {
 
   const updateArticle = async () => {
     try {
-      const token = localStorage.getItem("uiAppToken");
       const objData = {
         name: article.name,
         text: article.text,
@@ -152,8 +154,7 @@ const ArticlePage = () => {
 
   const updateComment = async () => {
     try {
-      const token = localStorage.getItem("uiAppToken");
-      const objData = {
+      const commentData = {
         text: editComment.text,
       };
 
@@ -165,7 +166,7 @@ const ArticlePage = () => {
             "Content-Type": "application/json",
             "x-access-token": token,
           },
-          body: JSON.stringify(objData),
+          body: JSON.stringify(commentData),
         }
       );
 
@@ -195,6 +196,8 @@ const ArticlePage = () => {
 
   const buttonStyles = "p-button-rounded p-button-text p-button-outlined";
 
+  const canEditOrDeleteArticle = isAdmin || article.userId === userId;
+
   return (
     <div className="flex flex-column align-items-center justify-content-center min-h-screen">
       <Card
@@ -207,7 +210,7 @@ const ArticlePage = () => {
           {getDate(article.publicationTime)}
         </div>
       </Card>
-      {adminRole && (
+      {canEditOrDeleteArticle && (
         <div className="flex justify-content-center mb-4 gap-2">
           <Button
             label="Update Article"
@@ -246,35 +249,39 @@ const ArticlePage = () => {
           </p>
         )}
 
-        {article.comments.map((comment, index) => (
-          <div key={index} className="flex flex-column align-items-center">
-            <Card
-              key={index}
-              title={comment.commentatorName}
-              className="mb-4 w-10"
-            >
-              <p>{comment.text}</p>
-            </Card>
+        {article.comments.map((comment, index) => {
+          const canEditOrDeleteComment =
+            isAdmin || comment.commentatorId === userId;
+          return (
+            <div key={index} className="flex flex-column align-items-center">
+              <Card
+                key={index}
+                title={comment.commentatorName}
+                className="mb-4 w-10"
+              >
+                <p>{comment.text}</p>
+              </Card>
 
-            {adminRole && (
-              <div className="flex justify-content-center mb-4 gap-2">
-                <Button
-                  label="Update Comment"
-                  className={`p-button-primary ${buttonStyles}`}
-                  onClick={() => {
-                    setEditCommentDialog(true);
-                    setEditComment(comment);
-                  }}
-                />
-                <Button
-                  label="Remove Comment"
-                  className={`p-button-danger ${buttonStyles}`}
-                  onClick={() => removeComment(comment._id)}
-                />
-              </div>
-            )}
-          </div>
-        ))}
+              {canEditOrDeleteComment && (
+                <div className="flex justify-content-center mb-4 gap-2">
+                  <Button
+                    label="Update Comment"
+                    className={`p-button-primary ${buttonStyles}`}
+                    onClick={() => {
+                      setEditCommentDialog(true);
+                      setEditComment(comment);
+                    }}
+                  />
+                  <Button
+                    label="Remove Comment"
+                    className={`p-button-danger ${buttonStyles}`}
+                    onClick={() => removeComment(comment._id)}
+                  />
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
 
       <Dialog
@@ -293,7 +300,7 @@ const ArticlePage = () => {
             className="w-full"
           />
         </div>
-        <div className="p-field">
+        <div class="p-field">
           <label htmlFor="articleText">Text</label>
           <InputTextarea
             id="articleText"
@@ -319,7 +326,7 @@ const ArticlePage = () => {
             id="commentText"
             value={editComment.text}
             onChange={(e) =>
-              setEditComment({ ...editComment, text: e.targetvalue })
+              setEditComment({ ...editComment, text: e.target.value })
             }
             rows={3}
             className="w-full"

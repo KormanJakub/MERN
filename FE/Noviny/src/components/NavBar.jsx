@@ -1,50 +1,51 @@
 import { Link, useNavigate, useRouteLoaderData } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { decodeJWT } from "../util/token.js";
 
 const NavBar = () => {
   const token = useRouteLoaderData("root");
   const adminRole = localStorage.getItem("uiAppRole");
   const navigate = useNavigate();
+  const [user, setUser] = useState(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
-  const getUser = () => {
-    // Retrieve the token from localStorage
-    const token = localStorage.getItem("uiAppToken");
+  const tokenLoc = localStorage.getItem("uiAppToken");
+  const decodedToken = decodeJWT(tokenLoc);
 
-    // If no token is found, return null
-    if (!token) {
-      return null;
-    }
+  const userId = decodedToken.userId;
 
-    // Decode the JWT token to extract the payload
-    try {
-      const base64Url = token.split(".")[1];
-      const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-      const jsonPayload = decodeURIComponent(
-        atob(base64)
-          .split("")
-          .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
-          .join("")
-      );
-
-      const decodedPayload = JSON.parse(jsonPayload);
-
-      // Return the userId from the decoded payload
-      return decodedPayload.userId || null;
-    } catch (error) {
-      console.error("Error decoding token:", error);
-      return null;
-    }
-  };
-
-  const userId = getUser();
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:3000/user/getUserById/${userId}`,
+          {
+            headers: {
+              "x-access-token": token,
+            },
+          }
+        );
+  
+        if (response.ok) {
+          const userData = await response.json();
+          setUser(userData);
+        } else {
+          console.error("Failed to fetch user data.");
+        }
+      } catch (error) {
+        console.error("Error decoding token:", error);
+        return null;
+      }
+    };
+    load();
+  }, [navigate]);
 
   return (
-    <nav className="bg-gray-800">
+    <nav className="bg-gray-400">
       <div className="container mx-auto p-4 flex justify-between items-center gap-5">
         <div
           className="text-white text-xl font-bold cursor-pointer"

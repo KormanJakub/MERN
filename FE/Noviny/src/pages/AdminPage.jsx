@@ -69,6 +69,11 @@ const AdminPage = () => {
     navigate(`/user/${userId}`);
   };
 
+  const handleRowClickArticle = (event) => {
+    const art_id = event.data._id;
+    navigate(`/articles/${art_id}`);
+  };
+
   const handleDialogClose = () => {
     setShowDialog(false);
     setNewUser({
@@ -104,8 +109,12 @@ const AdminPage = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:3000/public/signUp", {
+      const response = await fetch("http://localhost:3000/admin/createUser", {
         method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-access-token": localStorage.getItem("uiAppToken"),
+        },
         body: JSON.stringify(newUser),
       });
 
@@ -123,28 +132,34 @@ const AdminPage = () => {
   };
 
   return (
-    <div className="admin">
-      <div className="flex gap-8 align-items-center justify-content-center">
-        <div>
+    <div className="container mx-auto py-8 px-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="flex flex-col items-center">
           <Knob
             value={userDatas.length}
             disabled
-            size={250}
+            size={150}
             valueColor="#48d1cc"
+            className="mx-auto"
           />
-          <p className="ml-5">Registered users!</p>
+          <p className="text-center mt-2 font-semibold">Registered users</p>
         </div>
-
-        <div className="articles">
-          <Knob value={articleDatas.length} disabled size={250} />
-          <p className="ml-5">Created articles!</p>
+        <div className="flex flex-col items-center">
+          <Knob
+            value={articleDatas.length}
+            disabled
+            size={150}
+            className="mx-auto"
+          />
+          <p className="text-center mt-2 font-semibold">Created articles</p>
         </div>
       </div>
 
-      <div className="mb-4 flex justify-between">
+      <div className="mb-4 flex justify-end mt-4">
         <Button
           label="Add User"
           icon="pi pi-plus"
+          className="p-button-primary"
           onClick={() => setShowDialog(true)}
         />
       </div>
@@ -154,117 +169,123 @@ const AdminPage = () => {
         showGridlines
         removableSort
         value={userDatas}
-        tableStyle={{ minWidth: "50rem", minHeight: "20rem" }}
+        tableStyle={{ minWidth: "100%", minHeight: "20rem" }}
         paginator
         rows={5}
+        responsiveLayout="scroll"
         onRowClick={handleRowClick}
       >
         <Column
           className="cursor-pointer"
           field="nickName"
           header="Nick Name"
-        ></Column>
-        <Column field="firstName" header="First Name"></Column>
-        <Column field="lastName" header="Last Name"></Column>
-        <Column field="email" header="Email"></Column>
+        />
+        <Column field="firstName" header="First Name" />
+        <Column field="lastName" header="Last Name" />
+        <Column field="email" header="Email" />
       </DataTable>
 
       <DataTable
         value={articleDatas}
         showGridlines
         removableSort
-        tableStyle={{ minWidth: "50rem", minHeight: "20rem" }}
+        tableStyle={{ minWidth: "100%", minHeight: "20rem" }}
         paginator
         rows={5}
+        responsiveLayout="scroll"
+        onRowClick={handleRowClickArticle}
       >
         <Column
           className="cursor-pointer"
           field="name"
           header="Name of article"
-        ></Column>
-        <Column field="publicationTime" header="Publication time"></Column>
-        <Column field="userName" header="Writer"></Column>
+        />
+        <Column field="publicationTime" header="Publication time" />
+        <Column field="userName" header="Writer" />
       </DataTable>
 
       <Dialog
         header="Add User"
         visible={showDialog}
-        style={{ width: "50vw" }}
+        style={{ width: "90vw", maxWidth: "500px" }}
         modal
         onHide={handleDialogClose}
       >
-        <div className="p-field">
-          <label htmlFor="nickName">Nick Name:</label>
-          <InputText
-            id="nickName"
-            name="nickName"
-            value={newUser.nickName}
-            onChange={handleInputChange}
-          />
-        </div>
-        <div className="p-field">
-          <label htmlFor="firstName">First Name:</label>
-          <InputText
-            id="firstName"
-            name="firstName"
-            value={newUser.firstName}
-            onChange={handleInputChange}
-          />
-        </div>
-        <div className="p-field">
-          <label htmlFor="lastName">Last Name:</label>
-          <InputText
-            id="lastName"
-            name="lastName"
-            value={newUser.lastName}
-            onChange={handleInputChange}
-          />
-        </div>
-        <div className="p-field">
-          <label htmlFor="email">Email:</label>
-          <InputText
-            id="email"
-            name="email"
-            value={newUser.email}
-            onChange={handleInputChange}
-          />
-        </div>
-        <div className="p-field">
-          <label htmlFor="password">Password:</label>
-          <Password
-            id="password"
-            name="password"
-            value={newUser.password}
-            onChange={handleInputChange}
-          />
-        </div>
-        <div className="p-field">
-          <label htmlFor="password_repeat">Repeat Password:</label>
-          <Password
-            id="password_repeat"
-            name="password_repeat"
-            value={newUser.password_repeat}
-            onChange={handleInputChange}
-          />
-        </div>
-
-        {passwordMismatch && (
-          <Message severity="error" text="Passwords do not match!" />
-        )}
-
-        <div className="flex justify-end">
-          <Button
-            label="Add"
-            icon="pi pi-check"
-            onClick={handleAddUser}
-            disabled={passwordMismatch || !newUser.password}
-          />
-          <Button
-            label="Cancel"
-            icon="pi pi-times"
-            className="ml-2"
-            onClick={handleDialogClose}
-          />
+        <div className="p-fluid">
+          <div className="p-field">
+            <label htmlFor="nickName">Nick Name</label>
+            <InputText
+              id="nickName"
+              name="nickName"
+              value={newUser.nickName}
+              onChange={handleInputChange}
+            />
+          </div>
+          <div class="p-field">
+            <label htmlFor="firstName">First Name</label>
+            <InputText
+              id="firstName"
+              name="firstName"
+              value={newUser.firstName}
+              onChange={handleInputChange}
+            />
+          </div>
+          <div class="p-field">
+            <label htmlFor="lastName">Last Name</label>
+            <InputText
+              id="lastName"
+              name="lastName"
+              value={newUser.lastName}
+              onChange={handleInputChange}
+            />
+          </div>
+          <div class="p-field">
+            <label htmlFor="email">Email</label>
+            <InputText
+              id="email"
+              name="email"
+              value={newUser.email}
+              onChange={handleInputChange}
+            />
+          </div>
+          <div class="p-field">
+            <label htmlFor="password">Password</label>
+            <Password
+              id="password"
+              name="password"
+              value={newUser.password}
+              onChange={handleInputChange}
+              feedback={false}
+            />
+          </div>
+          <div class="p-field">
+            <label htmlFor="password_repeat">Repeat Password</label>
+            <Password
+              id="password_repeat"
+              name="password_repeat"
+              value={newUser.password_repeat}
+              onChange={handleInputChange}
+              feedback={false}
+            />
+          </div>
+          {passwordMismatch && (
+            <Message severity="error" text="Passwords do not match!" />
+          )}
+          <div class="flex justify-end gap-2">
+            <Button
+              label="Add"
+              icon="pi pi-check"
+              className="p-button-success"
+              onClick={handleAddUser}
+              disabled={passwordMismatch || !newUser.password}
+            />
+            <Button
+              label="Cancel"
+              icon="pi pi-times"
+              className="p-button-secondary"
+              onClick={handleDialogClose}
+            />
+          </div>
         </div>
       </Dialog>
     </div>

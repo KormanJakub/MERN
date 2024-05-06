@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
+import { Password } from "primereact/password";
+import { decodeJWT } from "../util/token.js";
 
 const UserPage = () => {
   const { userId } = useParams();
@@ -16,6 +18,13 @@ const UserPage = () => {
     password: "",
   });
   const navigate = useNavigate();
+
+  const tokenLoc = localStorage.getItem("uiAppToken");
+  const decodedToken = decodeJWT(tokenLoc);
+  const userIdWithToken = decodedToken.userId === userId;
+  const adminRole = localStorage.getItem("uiAppRole") === "admin";
+
+  const canEditOrDelete = userIdWithToken || adminRole;
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -36,7 +45,6 @@ const UserPage = () => {
             firstName: userData.record.firstName,
             lastName: userData.record.lastName,
             email: userData.record.email,
-            password: "",
           });
         } else {
           console.error("Failed to fetch user data.");
@@ -94,7 +102,7 @@ const UserPage = () => {
       if (response.ok) {
         console.log("User successfully updated.");
         setEditMode(false);
-        setUser({ record: formData });
+        setUser({record: formData});
       } else {
         console.error("Failed to update user. Response status:", response.status);
       }
@@ -136,86 +144,95 @@ const UserPage = () => {
     }));
   };
 
-  const adminRole = localStorage.getItem("uiAppRole");
-
   if (!user) {
     return <p>Loading...</p>;
   }
 
   return (
-    <div>
-      <h1>User Profile</h1>
-      {editMode ? (
-        <>
-          <div className="p-field">
-            <label htmlFor="nickName">Nick Name:</label>
-            <InputText
-              id="nickName"
-              name="nickName"
-              value={formData.nickName}
-              onChange={handleInputChange}
-            />
-          </div>
-          <div className="p-field">
-            <label htmlFor="firstName">First Name:</label>
-            <InputText
-              id="firstName"
-              name="firstName"
-              value={formData.firstName}
-              onChange={handleInputChange}
-            />
-          </div>
-          <div className="p-field">
-            <label htmlFor="lastName">Last Name:</label>
-            <InputText
-              id="lastName"
-              name="lastName"
-              value={formData.lastName}
-              onChange={handleInputChange}
-            />
-          </div>
-          <div className="p-field">
-            <label htmlFor="email">Email:</label>
-            <InputText
-              id="email"
-              name="email"
-              value={formData.email}
-              onChange={handleInputChange}
-            />
-          </div>
-          <Button label="Save" icon="pi pi-save" onClick={updateUser} />
-          <Button label="Cancel" icon="pi pi-times" className="ml-2" onClick={() => setEditMode(false)} />
-        </>
-      ) : changePasswordMode ? (
-        <>
-          <div className="p-field">
-            <label htmlFor="password">New Password:</label>
-            <InputText
-              id="password"
-              name="password"
-              value={formData.password}
-              type="password"
-              onChange={handleInputChange}
-            />
-          </div>
-          <Button label="Change Password" icon="pi pi-save" onClick={changePassword} />
-          <Button label="Cancel" icon="pi pi-times" className="ml-2" onClick={() => setChangePasswordMode(false)} />
-        </>
-      ) : (
-        <>
-          <p>Nick Name: {user.record.nickName}</p>
-          <p>First Name: {user.record.firstName}</p>
-          <p>Last Name: {user.record.lastName}</p>
-          <p>Email: {user.record.email}</p>
-          {adminRole === "admin" && (
-            <>
-              <Button label="Edit" icon="pi pi-pencil" onClick={() => setEditMode(true)} />
-              <Button label="Change Password" icon="pi pi-key" className="ml-2" onClick={() => setChangePasswordMode(true)} />
-              <Button label="Delete user" icon="pi pi-trash" className="p-button-danger ml-2" onClick={deleteUser} />
-            </>
-          )}
-        </>
-      )}
+    <div className="flex flex-column align-items-center justify-content-center min-h-screen">
+      <div className="card w-6">
+        <h1 className="text-center mb-4">User Profile</h1>
+        {editMode ? (
+          <>
+            <div className="p-field mb-4">
+              <label htmlFor="nickName">Nick Name:</label>
+              <InputText
+                id="nickName"
+                name="nickName"
+                value={formData.nickName}
+                onChange={handleInputChange}
+                className="w-full"
+              />
+            </div>
+            <div className="p-field mb-4">
+              <label htmlFor="firstName">First Name:</label>
+              <InputText
+                id="firstName"
+                name="firstName"
+                value={formData.firstName}
+                onChange={handleInputChange}
+                className="w-full"
+              />
+            </div>
+            <div className="p-field mb-4">
+              <label htmlFor="lastName">Last Name:</label>
+              <InputText
+                id="lastName"
+                name="lastName"
+                value={formData.lastName}
+                onChange={handleInputChange}
+                className="w-full"
+              />
+            </div>
+            <div className="p-field mb-4">
+              <label htmlFor="email">Email:</label>
+              <InputText
+                id="email"
+                name="email"
+                value={formData.email}
+                onChange={handleInputChange}
+                className="w-full"
+              />
+            </div>
+            <div className="flex justify-content-center gap-2">
+              <Button label="Save" icon="pi pi-save" className="p-button-success" onClick={updateUser} />
+              <Button label="Cancel" icon="pi pi-times" className="p-button-danger" onClick={() => setEditMode(false)} />
+            </div>
+          </>
+        ) : changePasswordMode ? (
+          <>
+            <div className="p-field mb-4">
+              <label htmlFor="password">New Password:</label>
+              <Password
+                id="password"
+                name="password"
+                value={formData.password}
+                feedback={false}
+                onChange={handleInputChange}
+                className="w-full"
+              />
+            </div>
+            <div className="flex justify-content-center gap-2">
+              <Button label="Change Password" icon="pi pi-save" className="p-button-success" onClick={changePassword} />
+              <Button label="Cancel" icon="pi pi-times" className="p-button-danger" onClick={() => setChangePasswordMode(false)} />
+            </div>
+          </>
+        ) : (
+          <>
+            <p className="text-center">Nick Name: {user.record.nickName}</p>
+            <p className="text-center">First Name: {user.record.firstName}</p>
+            <p className="text-center">Last Name: {user.record.lastName}</p>
+            <p className="text-center">Email: {user.record.email}</p>
+            {canEditOrDelete && (
+              <div className="flex justify-content-center gap-2 mt-4">
+                <Button label="Edit" icon="pi pi-pencil" className="p-button-primary" onClick={() => setEditMode(true)} />
+                <Button label="Change Password" icon="pi pi-key" className="p-button-secondary" onClick={() => setChangePasswordMode(true)} />
+                <Button label="Delete user" icon="pi pi-trash" className="p-button-danger" onClick={deleteUser} />
+              </div>
+            )}
+          </>
+        )}
+      </div>
     </div>
   );
 };
