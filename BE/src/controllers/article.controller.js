@@ -44,12 +44,12 @@ const createArticle = [
     checkValidation(validationResult(req));
 
     const { name, text } = req.body;
-
+    
     let imageLocation = "";
     if (req.file.path) {
       imageLocation = req.file.path.substr(req.file.path.indexOf("/") + 1);
     }
-
+   
     const record = new articleModel({
       name,
       text,

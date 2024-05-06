@@ -10,12 +10,6 @@ import { Divider } from "primereact/divider";
 
 import validator from "validator";
 
-/*
-TODO:
-Spraviť validáciu
-Spraviť, aby sa zobrazil error ak je niečo neplatné
-*/
-
 const RegisterPage = () => {
   const required = (value) => {
     if (!value) {

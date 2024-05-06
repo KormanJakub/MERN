@@ -107,6 +107,7 @@ const singIn = [
   },
 ];
 
+
 const updatePassword = [
   body("password").not().isEmpty().withMessage("Heslo nemôže byť prázdne"),
 
@@ -162,6 +163,7 @@ const updatePassword = [
     res.send({});
   },
 ];
+
 
 const getUserById = async (req, res) => {
   const record = await userModel.findById(req.params.id);

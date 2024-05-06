@@ -57,7 +57,7 @@ const UserPage = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:3000/user/deleteUserById/${userId}`,
+        `http://localhost:3000/admin/deleteUser/${userId}`,
         {
           method: "DELETE",
           headers: {
@@ -106,7 +106,7 @@ const UserPage = () => {
   const changePassword = async () => {
     try {
       const response = await fetch(
-        `http://localhost:3000/user/changePassword/${userId}`,
+        `http://localhost:3000/user/updatePassword/${userId}`,
         {
           method: "PUT",
           headers: {

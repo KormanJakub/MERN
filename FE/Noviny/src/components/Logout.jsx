@@ -1,6 +1,10 @@
-import { redirect } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
-export function action() {
-  localStorage.remove()
-  return redirect("/");
+export function logout() {
+  const navigate = useNavigate();
+
+  localStorage.removeItem("uiAppRole")
+  localStorage.removeItem("uiAppToken");
+
+  navigate("/login");
 }

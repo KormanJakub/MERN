@@ -109,8 +109,6 @@ const AdminPage = () => {
         body: JSON.stringify(newUser),
       });
 
-      console.log(JSON.stringify(newUser));
-
       if (response.ok) {
         const createdUser = await response.json();
         setUsersData((prevUsers) => [...prevUsers, createdUser]);
