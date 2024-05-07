@@ -1,6 +1,7 @@
 import { Link, useNavigate, useRouteLoaderData } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { decodeJWT } from "../util/token.js";
+import { Button } from "primereact/button";
 
 const NavBar = () => {
   const token = useRouteLoaderData("root");
@@ -12,37 +13,6 @@ const NavBar = () => {
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
-
-  const tokenLoc = localStorage.getItem("uiAppToken");
-  const decodedToken = decodeJWT(tokenLoc);
-
-  const userId = decodedToken.userId;
-
-  useEffect(() => {
-    const load = async () => {
-      try {
-        const response = await fetch(
-          `http://localhost:3000/user/getUserById/${userId}`,
-          {
-            headers: {
-              "x-access-token": token,
-            },
-          }
-        );
-  
-        if (response.ok) {
-          const userData = await response.json();
-          setUser(userData);
-        } else {
-          console.error("Failed to fetch user data.");
-        }
-      } catch (error) {
-        console.error("Error decoding token:", error);
-        return null;
-      }
-    };
-    load();
-  }, [navigate]);
 
   return (
     <nav className="bg-gray-400">
@@ -93,18 +63,17 @@ const NavBar = () => {
               >
                 Admin
               </Link>
-              <Link
-                method="post"
-                action="/logout"
-                className="text-white hover:bg-gray-600 px-3 py-2 rounded"
-              >
+              <Button onClick={ () => {
+                localStorage.removeItem("uiAppRole")
+                localStorage.removeItem("uiAppToken");
+              }}>
                 Logout
-              </Link>
+              </Button>
             </>
           ) : (
             <>
               <Link
-                to={`/user/${userId}`}
+                to={`/user/`}
                 className="text-white hover:bg-gray-600 px-3 py-2 rounded"
               >
                 User
@@ -184,7 +153,7 @@ const NavBar = () => {
           ) : (
             <>
               <Link
-                to={`/user/${userId}`}
+                to={`/user/`}
                 className="block text-white hover:bg-gray-600 px-4 py-2"
                 onClick={() => setIsMobileMenuOpen(false)}
               >

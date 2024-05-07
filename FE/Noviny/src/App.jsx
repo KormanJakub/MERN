@@ -11,7 +11,7 @@ import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import RootLayout from "./components/RootLayout";
 import { checkAdmin, checkAuthLoader, tokenLoader } from "./util/auth";
 import { action as loginAction } from "./util/loaders";
-import { logout as logoutAction } from "./components/Logout";
+import { action as logoutAction } from "./components/Logout";
 import ErrorPage from "./components/ErrorPage";
 import UserPage from "./pages/UserPage";
 
@@ -62,7 +62,13 @@ const router = createBrowserRouter([
       },
       {
         path: "logout",
-        action: logoutAction,
+        action: () => {
+          localStorage.removeItem("uiAppRole");
+          localStorage.removeItem("uiAppToken");
+          console.log("presiel sonm");
+
+          return redirect("/login");
+        },
       },
       {
         path: "user/:userId",

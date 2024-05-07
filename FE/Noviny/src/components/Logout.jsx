@@ -1,10 +1,9 @@
-import { useNavigate } from "react-router-dom";
+import { redirect } from "react-router-dom";
 
-export function logout() {
-  const navigate = useNavigate();
-
+export async function action() {
   localStorage.removeItem("uiAppRole")
   localStorage.removeItem("uiAppToken");
+  console.log("presiel sonm");
 
-  navigate("/login");
+  return redirect("/login");
 }
