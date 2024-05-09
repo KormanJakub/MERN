@@ -1,13 +1,11 @@
-import { Link, useNavigate, useRouteLoaderData } from "react-router-dom";
+import { Link, redirect, useNavigate, useRouteLoaderData } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { decodeJWT } from "../util/token.js";
 import { Button } from "primereact/button";
 
 const NavBar = () => {
   const token = useRouteLoaderData("root");
   const adminRole = localStorage.getItem("uiAppRole");
   const navigate = useNavigate();
-  const [user, setUser] = useState(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const toggleMobileMenu = () => {
@@ -63,10 +61,14 @@ const NavBar = () => {
               >
                 Admin
               </Link>
-              <Button onClick={ () => {
-                localStorage.removeItem("uiAppRole")
-                localStorage.removeItem("uiAppToken");
-              }}>
+              <Button
+                onClick={() => {
+                  localStorage.removeItem("uiAppRole");
+                  localStorage.removeItem("uiAppToken");
+
+                  navigate("/");
+                }}
+              >
                 Logout
               </Button>
             </>
@@ -78,13 +80,16 @@ const NavBar = () => {
               >
                 User
               </Link>
-              <Link
-                method="post"
-                action="/logout"
-                className="text-white hover:bg-gray-600 px-3 py-2 rounded"
+              <Button
+                onClick={() => {
+                  localStorage.removeItem("uiAppRole");
+                  localStorage.removeItem("uiAppToken");
+
+                  navigate("/");
+                }}
               >
                 Logout
-              </Link>
+              </Button>
             </>
           )}
         </div>

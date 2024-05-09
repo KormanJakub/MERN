@@ -95,16 +95,13 @@ const AddArticlePage = () => {
           <div className="p-field">
             <label htmlFor="file-upload">Upload Image</label>
             <FileUpload
-              id="file-upload"
-              mode="basic"
-              name="demo[]"
-              url="/api/upload"
-              accept="image/*"
-              maxFileSize={1000000}
-              onUpload={onUpload}
-              auto
-              chooseLabel="Browse"
-              className="w-full"
+              imode={'basic'}
+              id="image"
+              //{...input}
+              customUpload
+              //onSelect={(e) => setImage(e.files[0])}
+              accept={'image/*'}
+              chooseLabel={'Upload image'}
             />
           </div>
 
