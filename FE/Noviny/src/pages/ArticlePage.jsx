@@ -6,6 +6,7 @@ import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
 import { decodeJWT } from "../util/token";
+import { Image } from 'primereact/image';
 import { fetchGet, fetchPost } from "../util/api";
 
 const ArticlePage = () => {
@@ -26,10 +27,15 @@ const ArticlePage = () => {
   const load = useCallback(async () => {
     try {
       const artData = await fetchGet("/articles/getArticleById/" + art_id);
+      console.log(artData);
       setArticle({
         ...artData.record,
         comments: artData.comments.slice(0, 20),
       });
+
+      let imagePath = article.imageLocation;
+      let correctedPath = imagePath.replace("/\/g", "/");
+      correctedPath = correctedPath.replace("public/", "");
     } catch (error) {
       console.log(error.message);
     }
@@ -205,6 +211,7 @@ const ArticlePage = () => {
         subTitle={`by ${article.userName}`}
         className="mb-4 w-10"
       >
+        <Image src={`http://localhost:3000/${article.imageLocation}`} alt="Image" width="250" />
         <div className="text-lg">{article.text}</div>
         <div className="mt-2 text-gray-500">
           {getDate(article.publicationTime)}

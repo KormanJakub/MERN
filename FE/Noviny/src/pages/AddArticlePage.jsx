@@ -10,6 +10,7 @@ const AddArticlePage = () => {
   const [header, setHeader] = useState("");
   const [text, setText] = useState("");
   const toast = useRef(null);
+  const [image, setImage] = useState();
 
   const onUpload = () => {
     toast.current.show({
@@ -22,22 +23,24 @@ const AddArticlePage = () => {
   const addArticle = async (pHeader, pText) => {
     try {
       const token = localStorage.getItem("uiAppToken");
-      const objData = {
-        name: pHeader,
-        text: pText,
-      };
+
+      const formData = new FormData();
+      formData.append("image", image);
+      formData.append("name", pHeader);
+      formData.append("text", pText);
 
       const response = await fetch(
         "http://localhost:3000/articles/createArticle",
         {
           method: "POST",
           headers: {
-            "Content-Type": "application/json",
             "x-access-token": token,
           },
-          body: JSON.stringify(objData),
+          body: formData,
         }
       );
+
+      console.log(response);
 
       if (response.ok) {
         toast.current.show({
@@ -97,9 +100,8 @@ const AddArticlePage = () => {
             <FileUpload
               imode={'basic'}
               id="image"
-              //{...input}
               customUpload
-              //onSelect={(e) => setImage(e.files[0])}
+              onSelect={(e) => setImage(e.files[0])}
               accept={'image/*'}
               chooseLabel={'Upload image'}
             />

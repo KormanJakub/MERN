@@ -13,7 +13,7 @@ let upload = multer({ storage, fileFilter, limits: { fileSize: "10MB" } });
 const getAllArticles = async (req, res) => {
   const records = await articleModel.find();
   res.send(records);
-}; //FUNGUJE
+};
 
 const getArticleById = async (req, res) => {
   const record = await articleModel.findById(req.params.id);
@@ -27,12 +27,12 @@ const getArticleById = async (req, res) => {
   });
 
   res.send({ record, comments });
-}; //FUNGUJE
+};
 
 const getArticleByUser = async (req, res) => {
   const records = await articleModel.find({ userId: req.user.userId });
   res.send(records);
-}; //FUNGUJE ALE TREBA OTESTOVAŤ
+};
 
 const createArticle = [
   upload.single("image"),
@@ -41,23 +41,25 @@ const createArticle = [
   body("text").not().isEmpty().withMessage("Text nesmie byť prázdny."),
 
   async (req, res) => {
+    console.log(req.body);
+    console.log(req.file);
+
     checkValidation(validationResult(req));
 
     const { name, text } = req.body;
-    
-    /*
+
     let imageLocation = "";
-    if (req.file.path) {
-      imageLocation = req.file.path.substr(req.file.path.indexOf("/") + 1);
+    if (req.file?.path) {
+      imageLocation = "images/" + req.file.filename;
     }
-    */
-   
+
     const record = new articleModel({
       name,
       text,
       userName: req.user.userName,
       userId: req.user.userId,
       publicationTime: Date.now(),
+      imageLocation,
     });
 
     try {
